@@ -6,8 +6,6 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-
-	"github.com/ekant01/caching-proxy/internal/proxy"
 )
 
 func StartServer(port int, origin string) error {
@@ -32,7 +30,7 @@ func StartServer(port int, origin string) error {
 		// Check if the response is cached
 		cachekey := r.Method + ":" + r.URL.String()
 
-		if cachedResponse, found := proxy.Get(cachekey); found {
+		if cachedResponse, found := Get(cachekey); found {
 			// If cached, write the cached response
 			w.WriteHeader(cachedResponse.Status)
 			for key, values := range cachedResponse.Headers {
@@ -57,9 +55,16 @@ func StartServer(port int, origin string) error {
 			return
 		}
 
+		// Read the response body
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			http.Error(w, "Error reading response body", http.StatusInternalServerError)
+			return
+		}
+
 		// Cache the response
-		proxy.Set(cachekey, &proxy.Cache{
-			Body:    resp.Body,
+		Set(cachekey, &Cache{
+			Body:    bodyBytes,
 			Headers: resp.Header,
 			Status:  resp.StatusCode,
 		})
@@ -71,7 +76,7 @@ func StartServer(port int, origin string) error {
 				w.Header().Add(key, value)
 			}
 		}
-		io.Copy(w, resp.Body)
+		w.Write(bodyBytes)
 		w.Header().Set("X-Cache", "MISS")
 
 	}
