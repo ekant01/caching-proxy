@@ -4,23 +4,21 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
+	"log"
 
+	"github.com/ekant01/caching-proxy/internal/proxy"
 	"github.com/spf13/cobra"
 )
 
 // clearCacheCmd represents the clearCache command
 var clearCacheCmd = &cobra.Command{
 	Use:   "clear-cache",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Clear the caching proxy cache",
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("clearCache called")
+		log.Println("Clearing cache...")
+		proxy.ClearAll()
+		log.Println("Cache cleared successfully.")
 	},
 }
 

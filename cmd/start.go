@@ -6,7 +6,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/ekant01/caching-proxy/internal/proxy/server"
+	"github.com/ekant01/caching-proxy/internal/proxy"
 	"github.com/spf13/cobra"
 )
 
@@ -23,7 +23,7 @@ var startCmd = &cobra.Command{
 This command initializes the server and begins processing incoming requests, caching responses as needed.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("start called")
-		err := server.StartServer(port, origin)
+		err := proxy.StartServer(port, origin)
 		if err != nil {
 			fmt.Printf("Error starting server: %v\n", err)
 		} else {

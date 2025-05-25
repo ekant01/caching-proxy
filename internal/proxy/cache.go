@@ -1,6 +1,7 @@
 package proxy
 
 import (
+	"log"
 	"net/http"
 	"sync"
 )
@@ -40,7 +41,7 @@ func Clear(url string) {
 func ClearAll() {
 	mu.Lock()
 	defer mu.Unlock()
-	println("Clearing all cached responses", len(cache))
+	log.Println("Clearing all cached responses", len(cache))
 	cache = make(map[string]*Cache)
-	println("All cached responses cleared", len(cache))
+	log.Println("All cached responses cleared", len(cache))
 }
