@@ -28,6 +28,14 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Received request:", r.Method, r.URL.String())
 	cachekey := r.Method + ":" + r.URL.String()
 
+	if r.URL.Path == "/clear-cache" {
+		log.Println("Received request to clear cache")
+		ClearAll()
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Cache cleared successfully"))
+		return
+	}
+
 	if cachedResponse, found := Get(cachekey); found {
 		log.Println("Cache hit for key:", cachekey)
 		for key, values := range cachedResponse.Headers {
