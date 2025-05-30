@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 var originURL *url.URL
@@ -13,6 +14,7 @@ var originURL *url.URL
 func StartServer(port int, origin string) error {
 	log.Println("Starting caching proxy server on port:", port, "with origin:", origin)
 
+	ClearOlderThan()
 	var err error
 	originURL, err = url.Parse(origin)
 	if err != nil {
@@ -69,9 +71,10 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	Set(cachekey, &Cache{
-		Body:    bodyBytes,
-		Headers: resp.Header,
-		Status:  resp.StatusCode,
+		Body:      bodyBytes,
+		Headers:   resp.Header,
+		Status:    resp.StatusCode,
+		CacheTime: time.Now().Unix(),
 	})
 
 	for key, values := range resp.Header {
